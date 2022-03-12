@@ -7,7 +7,7 @@
         <h3>새 UserInfo 추가하기</h3>
     <li>
         <label for="email">년도(ex.2020)</label>
-        <input type="text" name="year" pattern="[0-9]{4}" minlength="4" maxlength="4" style="width:130px; margin-right=10%;" required>
+        <input type="text" name="year" id='currnetYear' pattern="[0-9]{4}" minlength="4" maxlength="4" style="width:130px; margin-right=10%;" required>
     </li>
     <li>
         <label for="email">학기</label>
@@ -35,4 +35,18 @@
     </ul>
 </form>
 
+<script>
+    document.getElementById('currnetYear').value= new Date().toISOString().slice(0, 4);
+    var month = new Date().toISOString().slice(5, 7);
+    month *= 1;
+    if (month >= 3 && month <= 7) {
+        document.getElementById('semester').value = 1;
+    }
+    else {
+        document.getElementById('semester').value = 2;
+    }
+    //document.getElementById('currentSemester').value= new Date().toISOString().slice(0, 4);
+</script>
+
 {% endblock %}
+
