@@ -1348,7 +1348,7 @@ def no_group_notice(request):
     return render(request, 'no_group_notice.html')
 
 def no_student_id(request, pk):
-    messages.info(request, '학우님의 학번 정보를 찾을 수 없습니다. 관리자에게 문의해주세요')
+    messages.info(request, '이메일 계정이 학번이 아니거나 학우님의 학번 정보를 찾을 수 없습니다. Sign Up 진행하세요.')
     user = User.objects.get(pk=request.user.pk)
 
     try:
@@ -1360,8 +1360,8 @@ def no_student_id(request, pk):
         student_id = request.POST['student_id']
         stu_phone_num = "010" + str(request.POST['phone1']) + str(request.POST['phone2'])
         email = request.POST['email']
-        username = user.last_name
-
+        username = user.last_name + user.first_name
+        
         try:
             current = Current.objects.all().first()
             yearobj = current.year
@@ -1403,7 +1403,19 @@ def user_check(request):
     if not request.user.is_authenticated:
         return redirect('loginpage')
 
-    if request.user.email.endswith('@handong.edu'):
+    # 로그인도 했고, 그룹 정보도 있는 경우  main으로 가면 된다.
+    try:
+        current = Current.objects.all().first()
+        yearobj = current.year
+        sem = current.sem
+        user = User.objects.get(pk=request.user.pk)
+        userinfoobj = UserInfo.objects.get(year=yearobj, sem=sem, student_info=request.user.profile.student_info)
+        return HttpResponseRedirect(reverse('main'))
+    except:
+        # do nothing
+        isGroupUser = False
+
+    if request.user.email.endswith('@handong.ac.kr') or request.user.email == 'jcnam@handong.edu':
         try:
             user = User.objects.get(pk=request.user.pk)
             user.email = request.user.email
@@ -1417,7 +1429,7 @@ def user_check(request):
                 return HttpResponseRedirect(reverse('no_student_id', args=(user.pk,)))
 
             username = user.last_name
-            email = user.email
+            email = user.email            
 
             try:
                 current = Current.objects.all().first()
@@ -1460,7 +1472,7 @@ def user_check(request):
 
         return HttpResponseRedirect(reverse('main'))
     else:
-        messages.info(request, '한동 이메일로 로그인해주세요.')
+        messages.info(request, '새로운 한동 이메일(handong.ac.kr)로 로그인해주세요.')
         User.objects.filter(pk=request.user.pk).delete()
         return HttpResponseRedirect(reverse('loginpage'))
 
