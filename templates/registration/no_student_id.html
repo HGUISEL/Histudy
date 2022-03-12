@@ -11,7 +11,11 @@
     </li>
     <li>
         <label for="email">연락받을 이메일</label>
-        &nbsp&nbsp&nbsp&nbsp<input type="email" name="email" maxlength="50" style="width:200px; margin-right:5%;" required>
+        &nbsp&nbsp&nbsp&nbsp<input type="email" name="email" value="{{ request.user.email }}" maxlength="50" style="width:200px; margin-right:5%;" required>
+    </li>
+    <li>
+        <label for="email">이름</label>
+        &nbsp&nbsp&nbsp&nbsp{{ request.user.last_name }}{{ request.user.first_name }}
     </li>
     <li>
         <label for="email">Phone</label>
