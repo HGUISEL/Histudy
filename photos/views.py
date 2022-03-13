@@ -335,7 +335,9 @@ def warn_overwrite(request, year_pk, sem):
         for i in range(num_of_ppl):
             groupNo = imported_data_list[0][i]
             stuID = imported_data_list[1][i]
-            name = imported_data_list[3][i]
+            # csv에서 그룹 배정 명단 올릴 때 이름 칸에 이름과 이메일 주소 같이 저장이 되게 하게 위해서
+            # 학번 이메일 handong.edu를 이제 안쓰게 되어서 수정한 것임.
+            name = imported_data_list[3][i] + '(' + imported_data_list[2][i] + ')'
 
             try:
                 groupobj = Group.objects.get(no=groupNo)
@@ -440,7 +442,7 @@ def csv_upload(request):
             try:
                 student_info_obj = StudentInfo.objects.get(student_id=data[1])
             except:
-                student_info_obj = StudentInfo.objects.create(student_id=data[1], name=data[3])
+                student_info_obj = StudentInfo.objects.create(student_id=data[1], name=data[3] + '(' + data[2] + ')') 
             UserInfo.objects.create(year=yearobj, sem=semester, group=groupobj, student_info=student_info_obj)
 
         messages.success(request, 'csv 정보를 저장했습니다. ', extra_tags='alert')
@@ -1149,6 +1151,7 @@ def profile(request):
 
         # User를 기준으로 하면 가입한 사람만 뜨고, UserInfo를 기준으로 하면 가입하지 않은 사람도 뜬다.
         member_list = UserInfo.objects.filter(year=yearobj, sem=sem, group=userinfoobj.group).annotate(
+            #student_info = Profile.objects.get(student_id=request.POST['student_id'])
             num_posts = Count('data', filter=Q(data__year=yearobj, data__sem=sem)),
             total_time = Sum('data__study_total_duration', filter=Q(data__year=yearobj, data__sem=sem))
         )

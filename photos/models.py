@@ -15,7 +15,8 @@ class Group(models.Model):
 
 class StudentInfo(models.Model):
     student_id = models.PositiveIntegerField(validators=[MaxValueValidator(99999999)], null=True)
-    name = models.CharField(max_length=30, blank=True, null=True)
+    name = models.CharField(max_length=300, blank=True, null=True)
+    #email = models.EmailField(blank=True, null=True)
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, null=True)
